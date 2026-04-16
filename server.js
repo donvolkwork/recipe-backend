@@ -21,12 +21,16 @@ app.post('/api/recipes', async (req, res) => {
   try {
     const { ingredients, language = 'ru' } = req.body;
 
-    if (!ingredients || ingredients.length === 0) {
+    const ingredientsList = Array.isArray(ingredients)
+      ? ingredients
+      : ingredients.split(',').map(i => i.trim());
+
+    if (!ingredientsList || ingredientsList.length === 0) {
       return res.status(400).json({ error: 'No ingredients provided' });
     }
 
     const prompt = language === 'ru'
-      ? `У меня есть следующие продукты: ${ingredients.join(', ')}. 
+      ? `У меня есть следующие продукты: ${ingredientsList.join(', ')}. 
          Предложи ровно 3 рецепта которые можно приготовить из этих продуктов (можно использовать базовые специи, масло, соль).
          
          Ответь СТРОГО в формате JSON (без markdown, без \`\`\`):
@@ -42,7 +46,7 @@ app.post('/api/recipes', async (req, res) => {
              }
            ]
          }`
-      : `I have these ingredients: ${ingredients.join(', ')}.
+      : `I have these ingredients: ${ingredientsList.join(', ')}.
          Suggest exactly 3 recipes that can be made with these ingredients (basic spices, oil, salt are allowed).
          
          Reply STRICTLY in JSON format (no markdown, no \`\`\`):
