@@ -6,11 +6,14 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+console.log('API Key exists:', !!process.env.ANTHROPIC_API_KEY);
+console.log('API Key start:', process.env.ANTHROPIC_API_KEY?.substring(0, 10));
+
 app.use(cors());
 app.use(express.json());
 
 const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
+  apiKey: process.env.ANTHROPIC_API_KEY || '',
 });
 
 app.get('/health', (req, res) => {
